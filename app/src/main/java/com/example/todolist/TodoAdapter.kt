@@ -1,6 +1,5 @@
 package com.example.todolist
 
-import android.content.Intent
 import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.LayoutInflater
 import android.view.View
@@ -11,19 +10,18 @@ import kotlinx.android.synthetic.main.item_todo.view.*
 
 
 
-class TodoAdapter(private val todos: MutableList<Todo>
-                  ) : RecyclerView.Adapter<TodoAdapter.ItemViewHolder>() {
+class TodoAdapter(private val todos: MutableList<Todo>, private val onClickListener: MyOnClickListener) : RecyclerView.Adapter<TodoAdapter.ItemViewHolder>() {
 
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-
-        init {
-            itemView.setOnClickListener {
-                println("printout to log")
-                val intent =Intent(itemView.context, EditActivity::class.java)
-                itemView.context.startActivity(intent)
-            }
-        }
+            val textview = itemView.findViewById<TextView>(R.id.tvTodoTitle)
+//        init {
+//            itemView.setOnClickListener {
+//                println("printout to log")
+//                val intent =Intent(itemView.context, EditActivity::class.java)
+//                itemView.context.startActivity(intent)
+//            }
+//        }
     }
 
 
@@ -34,6 +32,10 @@ class TodoAdapter(private val todos: MutableList<Todo>
         return ItemViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.item_todo, parent, false )
         )
+    }
+
+    interface MyOnClickListener {
+        fun onItemClicked(position: Int)
     }
 
     fun addTodo(todo: Todo) {
@@ -70,7 +72,21 @@ class TodoAdapter(private val todos: MutableList<Todo>
             }
 
         }
-//        (holder as ItemViewHolder).bind(todos[position], clickListener)
+
+//        var resultLauncher = (holder.itemView.context as MainActivity)
+//            .registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//                result -> if (result.resultCode == Activity.RESULT_OK) {
+//                    val data: Intent? = result.data
+//                    Log.i("Aaron", "data passed from newEditActivity:" + data?.getStringExtra("newlyEditedText"))
+//                }
+//            }
+
+
+        //add onclickListener
+        holder.itemView.setOnClickListener {
+            onClickListener.onItemClicked(position)
+
+        }
 
     }
 //    class CustomViewHolder(private val view: View): RecyclerView.ViewHolder(view){
@@ -83,4 +99,6 @@ class TodoAdapter(private val todos: MutableList<Todo>
     override fun getItemCount(): Int {
        return this.todos.size
     }
+
+
 }
